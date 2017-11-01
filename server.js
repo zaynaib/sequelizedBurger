@@ -19,12 +19,22 @@ app.engine("handlebars", exphbs({
 }));
 app.set("view engine", "handlebars");
 
-var routes = require("./controllers/burgers_controller");
+// Requiring our models for syncing
+var db = require("./models");
 
-app.use("/", routes);
-app.use("/update", routes);
-app.use("/create", routes);
+//var routes = require("./controllers/burgers_controller");
+//routes
+require("./controllers/burgers_controller")(app)
+
 
 // listen on port 3000
-var port = process.env.PORT || 3000;
-app.listen(port);
+var PORT = process.env.PORT || 3000;
+
+
+
+// Syncing our sequelize models and then starting our express app
+db.sequelize.sync().then(function() {
+  app.listen(PORT, function() {
+    console.log("App listening on PORT " + PORT);
+  });
+});
